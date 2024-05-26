@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package project.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "projectfrontendservice/gen/project/v1;projectv1";
+
+service ProjectFrontendService {
+    rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse);
+    rpc ReadProject(ReadProjectRequest) returns (ReadProjectResponse);
+    rpc ReadAllProjects(ReadAllProjectsRequest) returns (ReadAllProjectsResponse);
+    rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse);
+    rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse);
+}
+
+message CreateProjectRequest {
+    Project project = 1;
+}
+
+message CreateProjectResponse {
+    string id = 1;
+}
+
+message ReadProjectRequest {
+    string id = 1;
+}
+
+message ReadProjectResponse {
+    Project project = 1;
+}
+
+message ReadAllProjectsRequest {
+    string author_id = 1;
+}
+
+message ReadAllProjectsResponse {
+    repeated Project project = 1;
+}
+
+message UpdateProjectRequest {
+    Project project = 1;
+}
+
+message UpdateProjectResponse {
+    // Empty response for UpdateProject RPC
+}
+
+message DeleteProjectRequest {
+    string id = 1;
+}
+
+message DeleteProjectResponse {
+    // Empty response for DeleteProject RPC
+}
+
+message Project {
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    repeated string collaborators = 4;
+    string author_id = 5;
+    string author_name = 6;
+    google.protobuf.Timestamp created_at = 7;
+}
