@@ -116,5 +116,5 @@ jobs:
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
-          exec: helm upgrade ${{ github.event.repository.name }} ./.helm/ --install --wait --atomic --namespace=loopabord --create-namespace --set=app.name=${{ github.event.repository.name }} --set=imageCredentials.registry=${{ secrets.IMAGECREDENTIALS_REGISTRY }} --set=imageCredentials.username=${{ secrets.IMAGECREDENTIALS_USERNAME }} --set=imageCredentials.password=${{ secrets.IMAGECREDENTIALS_PASSWORD }} --set=image.url=${{ needs.build.outputs.url }}
+          exec: helm upgrade loopabordprojectfrontendservice ./.helm/ --install --wait --atomic --namespace=loopabord --create-namespace --set=app.name=loopabordprojectfrontendservice --set=imageCredentials.registry=${{ secrets.IMAGECREDENTIALS_REGISTRY }} --set=imageCredentials.username=${{ secrets.IMAGECREDENTIALS_USERNAME }} --set=imageCredentials.password=${{ secrets.IMAGECREDENTIALS_PASSWORD }} --set=image.url=${{ needs.build.outputs.url }}
           kubeconfig: '${{ secrets.KUBECONFIG }}'
