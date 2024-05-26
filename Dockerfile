@@ -17,7 +17,7 @@ RUN chmod -R 777 /go/pkg/mod
 COPY . .
 
 # Build the Go app
-RUN go build -o main ./cmd/worker
+RUN go build -o main .
 
 
 # Serve Stage
