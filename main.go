@@ -112,7 +112,7 @@ func (p *ProjectServer) UpdateProject(ctx context.Context, req *connect.Request[
 func main() {
 	nc, err := nats.Connect(nats.DefaultURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer nc.Close()
 
