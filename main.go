@@ -125,5 +125,5 @@ func main() {
 	corsHandler := cors.AllowAll().Handler(mux)
 
 	// Start server
-	http.ListenAndServe("localhost:8080", h2c.NewHandler(corsHandler, &http2.Server{}))
+	http.ListenAndServe("0.0.0.0:8080", h2c.NewHandler(corsHandler, &http2.Server{}))
 }
