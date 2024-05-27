@@ -110,7 +110,8 @@ func (p *ProjectServer) UpdateProject(ctx context.Context, req *connect.Request[
 }
 
 func main() {
-	nc, err := nats.Connect(nats.DefaultURL)
+	natsURL := "nats://nats.loopabord.svc.cluster.local:4222"
+	nc, err := nats.Connect(natsURL)
 	if err != nil {
 		log.Println(err)
 	}

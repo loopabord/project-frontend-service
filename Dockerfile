@@ -1,36 +1,35 @@
-# Build Stage
-FROM docker.io/golang:1.22.3-bookworm AS builder
+# Stage 1: Build the Go application
+FROM golang:1.22.3-alpine AS build
 
-# Set the Current Working Directory inside the container
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy go mod and sum files
+# Copy the go.mod and go.sum files to the working directory
 COPY go.mod go.sum ./
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+# Download the Go module dependencies
 RUN go mod download
 
-# Ensure the module directory is writable
-RUN chmod -R 777 /go/pkg/mod
-
-# Copy the source code into the container
+# Copy the rest of the application code to the working directory
 COPY . .
 
-# Build the Go app
-RUN go build -o main .
+# Build the Go application
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
+# Stage 2: Create a lightweight container with the Go application
+FROM alpine:latest
 
-# Serve Stage
-FROM docker.io/golang:1.22.3-bookworm
+# Install ca-certificates for HTTPS support
+RUN apk --no-cache add ca-certificates
 
-# Set necessary environment variables
-ENV PORT=8080
+# Set the working directory inside the container
+WORKDIR /root/
 
-# Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+# Copy the built Go application from the previous stage
+COPY --from=build /app/main .
 
-# Expose port
+# Expose the port the service will run on
 EXPOSE 8080
 
-# Command to run the executable
+# Command to run the Go application
 CMD ["./main"]
