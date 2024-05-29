@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	projectv1 "projectfrontendservice/gen/project/v1"
 	"projectfrontendservice/gen/project/v1/projectv1connect"
 
@@ -14,6 +15,8 @@ import (
 	"github.com/rs/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
+
+	_ "github.com/joho/godotenv/autoload"
 )
 
 type ProjectServer struct {
@@ -56,18 +59,19 @@ func (p *ProjectServer) DeleteProject(ctx context.Context, req *connect.Request[
 
 // ReadAllProjects implements projectv1connect.ProjectFrontendServiceHandler.
 func (p *ProjectServer) ReadAllProjects(ctx context.Context, req *connect.Request[projectv1.ReadAllProjectsRequest]) (*connect.Response[projectv1.ReadAllProjectsResponse], error) {
-	msg, err := p.nc.Request("ReadAllProjects", nil, nats.DefaultTimeout)
+	authorId := req.Msg.GetAuthorId()
+	msg, err := p.nc.Request("ReadAllProjects", []byte(authorId), nats.DefaultTimeout)
 	if err != nil {
 		return nil, err
 	}
 
-	var response projectv1.ReadAllProjectsResponse
-	err = json.Unmarshal(msg.Data, &response)
+	var projects []*projectv1.Project
+	err = json.Unmarshal(msg.Data, &projects)
 	if err != nil {
 		return nil, err
 	}
 
-	return connect.NewResponse(&response), nil
+	return connect.NewResponse(&projectv1.ReadAllProjectsResponse{Projects: projects}), nil
 }
 
 // ReadProject implements projectv1connect.ProjectFrontendServiceHandler.
@@ -110,7 +114,9 @@ func (p *ProjectServer) UpdateProject(ctx context.Context, req *connect.Request[
 }
 
 func main() {
-	natsURL := "nats://nats.loopabord.svc.cluster.local:4222"
+	natsURL := os.Getenv("NATS_URL")
+
+	// natsURL := "nats://nats.loopabord.svc.cluster.local:4222"
 	nc, err := nats.Connect(natsURL)
 	if err != nil {
 		log.Println(err)

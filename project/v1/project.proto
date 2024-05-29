@@ -35,7 +35,7 @@ message ReadAllProjectsRequest {
 }
 
 message ReadAllProjectsResponse {
-    repeated Project project = 1;
+    repeated Project projects = 1;
 }
 
 message UpdateProjectRequest {
@@ -58,8 +58,9 @@ message Project {
     string id = 1;
     string name = 2;
     string description = 3;
-    repeated string collaborators = 4;
-    string author_id = 5;
-    string author_name = 6;
-    google.protobuf.Timestamp created_at = 7;
+    string author_id = 4;
+    string author_name = 5;
+    repeated string collaborator_ids = 6;
+    repeated string collaborator_names = 7;
+    google.protobuf.Timestamp created_at = 8;
 }
