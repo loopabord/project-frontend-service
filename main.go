@@ -12,7 +12,6 @@ import (
 	"connectrpc.com/connect"
 
 	"github.com/nats-io/nats.go"
-	"github.com/rs/cors"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 
@@ -116,7 +115,6 @@ func (p *ProjectServer) UpdateProject(ctx context.Context, req *connect.Request[
 func main() {
 	natsURL := os.Getenv("NATS_URL")
 
-	// natsURL := "nats://nats.loopabord.svc.cluster.local:4222"
 	nc, err := nats.Connect(natsURL)
 	if err != nil {
 		log.Println(err)
@@ -128,8 +126,31 @@ func main() {
 	path, handler := projectv1connect.NewProjectFrontendServiceHandler(server)
 	mux.Handle(path, handler)
 
-	// CORS middleware
-	corsHandler := cors.AllowAll().Handler(mux)
+	// Handle CORS headers
+	corsWrapper := func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Allow requests from any origin
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+
+			// Allow GET, POST, OPTIONS methods
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
+			// Allow specific headers
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+			// Handle preflight requests
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+
+			// Call the actual handler
+			h.ServeHTTP(w, r)
+		})
+	}
+
+	// Wrap the CORS middleware around your mux
+	corsHandler := corsWrapper(mux)
 
 	// Start server
 	http.ListenAndServe("0.0.0.0:8080", h2c.NewHandler(corsHandler, &http2.Server{}))
