@@ -114,6 +114,7 @@ func (p *ProjectServer) UpdateProject(ctx context.Context, req *connect.Request[
 
 func main() {
 	natsURL := os.Getenv("NATS_URL")
+	log.Println(natsURL)
 
 	nc, err := nats.Connect(natsURL)
 	if err != nil {
