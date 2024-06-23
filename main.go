@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	projectv1 "projectfrontendservice/gen/project/v1"
@@ -24,6 +25,10 @@ type ProjectServer struct {
 
 // Ping implements projectv1connect.ProjectFrontendServiceHandler.
 func (p *ProjectServer) Ping(context.Context, *connect.Request[projectv1.PingRequest]) (*connect.Response[projectv1.PingResponse], error) {
+	result := 0.0
+	for i := 0; i < 1000000000; i++ {
+		result += math.Sqrt(float64(i))
+	}
 	return connect.NewResponse(&projectv1.PingResponse{}), nil
 }
 
