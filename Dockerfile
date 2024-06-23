@@ -29,7 +29,7 @@ WORKDIR /root/
 COPY --from=build /app/main .
 
 # Expose the port the service will run on
-EXPOSE 8080
+EXPOSE 8082
 
 # Command to run the Go application
 CMD ["./main"]
