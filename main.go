@@ -22,6 +22,11 @@ type ProjectServer struct {
 	nc *nats.Conn
 }
 
+// Ping implements projectv1connect.ProjectFrontendServiceHandler.
+func (p *ProjectServer) Ping(context.Context, *connect.Request[projectv1.PingRequest]) (*connect.Response[projectv1.PingResponse], error) {
+	return connect.NewResponse(&projectv1.PingResponse{}), nil
+}
+
 // CreateProject implements projectv1connect.ProjectFrontendServiceHandler.
 func (p *ProjectServer) CreateProject(ctx context.Context, req *connect.Request[projectv1.CreateProjectRequest]) (*connect.Response[projectv1.CreateProjectResponse], error) {
 	project := req.Msg.GetProject()

@@ -12,6 +12,7 @@ service ProjectFrontendService {
     rpc ReadAllProjects(ReadAllProjectsRequest) returns (ReadAllProjectsResponse);
     rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse);
     rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse);
+    rpc Ping(PingRequest) returns (PingResponse);
 }
 
 message CreateProjectRequest {
@@ -51,6 +52,14 @@ message DeleteProjectRequest {
 }
 
 message DeleteProjectResponse {
+    // Empty response for DeleteProject RPC
+}
+
+message PingRequest {
+    // Empty response for DeleteProject RPC
+}
+
+message PingResponse {
     // Empty response for DeleteProject RPC
 }
 

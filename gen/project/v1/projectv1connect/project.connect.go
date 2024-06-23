@@ -48,6 +48,9 @@ const (
 	// ProjectFrontendServiceDeleteProjectProcedure is the fully-qualified name of the
 	// ProjectFrontendService's DeleteProject RPC.
 	ProjectFrontendServiceDeleteProjectProcedure = "/project.v1.ProjectFrontendService/DeleteProject"
+	// ProjectFrontendServicePingProcedure is the fully-qualified name of the ProjectFrontendService's
+	// Ping RPC.
+	ProjectFrontendServicePingProcedure = "/project.v1.ProjectFrontendService/Ping"
 )
 
 // These variables are the protoreflect.Descriptor objects for the RPCs defined in this package.
@@ -58,6 +61,7 @@ var (
 	projectFrontendServiceReadAllProjectsMethodDescriptor = projectFrontendServiceServiceDescriptor.Methods().ByName("ReadAllProjects")
 	projectFrontendServiceUpdateProjectMethodDescriptor   = projectFrontendServiceServiceDescriptor.Methods().ByName("UpdateProject")
 	projectFrontendServiceDeleteProjectMethodDescriptor   = projectFrontendServiceServiceDescriptor.Methods().ByName("DeleteProject")
+	projectFrontendServicePingMethodDescriptor            = projectFrontendServiceServiceDescriptor.Methods().ByName("Ping")
 )
 
 // ProjectFrontendServiceClient is a client for the project.v1.ProjectFrontendService service.
@@ -67,6 +71,7 @@ type ProjectFrontendServiceClient interface {
 	ReadAllProjects(context.Context, *connect.Request[v1.ReadAllProjectsRequest]) (*connect.Response[v1.ReadAllProjectsResponse], error)
 	UpdateProject(context.Context, *connect.Request[v1.UpdateProjectRequest]) (*connect.Response[v1.UpdateProjectResponse], error)
 	DeleteProject(context.Context, *connect.Request[v1.DeleteProjectRequest]) (*connect.Response[v1.DeleteProjectResponse], error)
+	Ping(context.Context, *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error)
 }
 
 // NewProjectFrontendServiceClient constructs a client for the project.v1.ProjectFrontendService
@@ -109,6 +114,12 @@ func NewProjectFrontendServiceClient(httpClient connect.HTTPClient, baseURL stri
 			connect.WithSchema(projectFrontendServiceDeleteProjectMethodDescriptor),
 			connect.WithClientOptions(opts...),
 		),
+		ping: connect.NewClient[v1.PingRequest, v1.PingResponse](
+			httpClient,
+			baseURL+ProjectFrontendServicePingProcedure,
+			connect.WithSchema(projectFrontendServicePingMethodDescriptor),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -119,6 +130,7 @@ type projectFrontendServiceClient struct {
 	readAllProjects *connect.Client[v1.ReadAllProjectsRequest, v1.ReadAllProjectsResponse]
 	updateProject   *connect.Client[v1.UpdateProjectRequest, v1.UpdateProjectResponse]
 	deleteProject   *connect.Client[v1.DeleteProjectRequest, v1.DeleteProjectResponse]
+	ping            *connect.Client[v1.PingRequest, v1.PingResponse]
 }
 
 // CreateProject calls project.v1.ProjectFrontendService.CreateProject.
@@ -146,6 +158,11 @@ func (c *projectFrontendServiceClient) DeleteProject(ctx context.Context, req *c
 	return c.deleteProject.CallUnary(ctx, req)
 }
 
+// Ping calls project.v1.ProjectFrontendService.Ping.
+func (c *projectFrontendServiceClient) Ping(ctx context.Context, req *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error) {
+	return c.ping.CallUnary(ctx, req)
+}
+
 // ProjectFrontendServiceHandler is an implementation of the project.v1.ProjectFrontendService
 // service.
 type ProjectFrontendServiceHandler interface {
@@ -154,6 +171,7 @@ type ProjectFrontendServiceHandler interface {
 	ReadAllProjects(context.Context, *connect.Request[v1.ReadAllProjectsRequest]) (*connect.Response[v1.ReadAllProjectsResponse], error)
 	UpdateProject(context.Context, *connect.Request[v1.UpdateProjectRequest]) (*connect.Response[v1.UpdateProjectResponse], error)
 	DeleteProject(context.Context, *connect.Request[v1.DeleteProjectRequest]) (*connect.Response[v1.DeleteProjectResponse], error)
+	Ping(context.Context, *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error)
 }
 
 // NewProjectFrontendServiceHandler builds an HTTP handler from the service implementation. It
@@ -192,6 +210,12 @@ func NewProjectFrontendServiceHandler(svc ProjectFrontendServiceHandler, opts ..
 		connect.WithSchema(projectFrontendServiceDeleteProjectMethodDescriptor),
 		connect.WithHandlerOptions(opts...),
 	)
+	projectFrontendServicePingHandler := connect.NewUnaryHandler(
+		ProjectFrontendServicePingProcedure,
+		svc.Ping,
+		connect.WithSchema(projectFrontendServicePingMethodDescriptor),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/project.v1.ProjectFrontendService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case ProjectFrontendServiceCreateProjectProcedure:
@@ -204,6 +228,8 @@ func NewProjectFrontendServiceHandler(svc ProjectFrontendServiceHandler, opts ..
 			projectFrontendServiceUpdateProjectHandler.ServeHTTP(w, r)
 		case ProjectFrontendServiceDeleteProjectProcedure:
 			projectFrontendServiceDeleteProjectHandler.ServeHTTP(w, r)
+		case ProjectFrontendServicePingProcedure:
+			projectFrontendServicePingHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -231,4 +257,8 @@ func (UnimplementedProjectFrontendServiceHandler) UpdateProject(context.Context,
 
 func (UnimplementedProjectFrontendServiceHandler) DeleteProject(context.Context, *connect.Request[v1.DeleteProjectRequest]) (*connect.Response[v1.DeleteProjectResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("project.v1.ProjectFrontendService.DeleteProject is not implemented"))
+}
+
+func (UnimplementedProjectFrontendServiceHandler) Ping(context.Context, *connect.Request[v1.PingRequest]) (*connect.Response[v1.PingResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("project.v1.ProjectFrontendService.Ping is not implemented"))
 }
