@@ -117,16 +117,16 @@ func (p *ProjectServer) UpdateProject(ctx context.Context, req *connect.Request[
 	}
 
 	// Accessing 'sub' from context
-	token, ok := ctx.Value("user").(*jwt.Token)
-	if !ok {
-		return nil, errors.New("unable to retrieve JWT token from context")
-	}
-	claims := token.Claims.(jwt.MapClaims)
-	sub := claims["sub"].(string)
+	// token, ok := ctx.Value("user").(*jwt.Token)
+	// if !ok {
+	// 	return nil, errors.New("unable to retrieve JWT token from context")
+	// }
+	// claims := token.Claims.(jwt.MapClaims)
+	// sub := claims["sub"].(string)
 
-	if sub != project.GetAuthorId() {
-		return nil, errors.New("unauthorized")
-	}
+	// if sub != project.GetAuthorId() {
+	// 	return nil, errors.New("unauthorized")
+	// }
 
 	msg, err := p.nc.Request("UpdateProject", data, nats.DefaultTimeout)
 	if err != nil {
@@ -226,7 +226,7 @@ func main() {
 	// protectedHandler := jwtMiddleware.Handler(corsHandler)
 
 	// Start server
-	http.ListenAndServe("0.0.0.0:8080", h2c.NewHandler(corsHandler, &http2.Server{}))
+	http.ListenAndServe("0.0.0.0:8082", h2c.NewHandler(corsHandler, &http2.Server{}))
 }
 
 // Helper function to fetch the JWT's signing certificate
