@@ -162,7 +162,7 @@ func main() {
 	corsWrapper := func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Allow requests from any origin
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", "https://loopabord.nl, http://localhost:5173")
 			// Allow specific headers
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Connect-Protocol-Version")
 			// Allow specific methods
