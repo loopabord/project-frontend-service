@@ -219,7 +219,7 @@ func main() {
 	// protectedHandler := jwtMiddleware.Handler(corsHandler)
 
 	// Start server
-	http.ListenAndServe("0.0.0.0:8082", h2c.NewHandler(corsHandler, &http2.Server{}))
+	http.ListenAndServe("0.0.0.0:8080", h2c.NewHandler(corsHandler, &http2.Server{}))
 }
 
 // Helper function to fetch the JWT's signing certificate
