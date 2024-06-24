@@ -11,6 +11,7 @@ import (
 	"os"
 	projectv1 "projectfrontendservice/gen/project/v1"
 	"projectfrontendservice/gen/project/v1/projectv1connect"
+	"strings"
 
 	"connectrpc.com/connect"
 
@@ -161,9 +162,13 @@ func main() {
 	// Handle CORS headers
 	corsWrapper := func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Allow requests from any origin dynamically based on the request
+			allowedOrigins := "https://loopabord.nl, http://localhost:5173"
+			origin := r.Header.Get("Origin")
+			if strings.Contains(allowedOrigins, origin) {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+			}
 			// Allow requests from any origin
-			w.Header().Set("Access-Control-Allow-Origin", "https://loopabord.nl, http://localhost:5173")
-			// Allow specific headers
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Connect-Protocol-Version")
 			// Allow specific methods
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
